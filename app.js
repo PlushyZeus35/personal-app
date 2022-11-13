@@ -3,6 +3,8 @@ const path = require('path');
 const { database} = require('./config');
 const sequelize = require('./models/index');
 const user = require('./models/user');
+require('./models/Weight');
+require('./models/Associations');
 const passport = require('passport');
 const session = require('express-session');
 const MariaDBStore = require('express-session-mariadb-store');

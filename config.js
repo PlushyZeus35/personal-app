@@ -3,10 +3,7 @@ module.exports = {
         password: "",
         database: "",
         host: "",
-        user: '',
+        user: "",
         port: 3306
-    },
-    json_web_token: {
-        key: "975ae948"
     }
 }
