@@ -1,6 +1,8 @@
 doctype html
 html(lang="en")
     head
+        script.
+            var weightData = !{JSON.stringify(userWeightData)};
         meta(charset="UTF-8")
         meta(http-equiv="X-UA-Compatible", content="IE=edge")
         meta(name="viewport", content="width=device-width, initial-scale=1.0")
@@ -12,8 +14,30 @@ html(lang="en")
         link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin='')
         link(href='https://fonts.googleapis.com/css2?family=Pacifico&display=swap' rel='stylesheet')
     body
+        #addValueModal.modal.fade(tabindex='-1' aria-labelledby='addValueModal' aria-hidden='true')
+            .modal-dialog.modal-dialog-centered.modal-fullscreen-sm-down
+                .modal-content
+                    .modal-header
+                        h1#exampleModalLabel.modal-title.fs-5 Añadir valor
+                        button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                    .modal-body
+                        form(action="/weights" method="POST") 
+                            .mb-3
+                                label.form-label(for="dateInput") Fecha
+                                input#dateInput.form-control(type="date" name="dateValue" required)
+                            .mb-3
+                                label.form-label(for="valueInput") Valor
+                                input#valueInput.form-control(type="number" step=0.01 name="weightValue" required)
+                            .modal-footer
+                                button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cerrar
+                                button.btn.btn-primary(type='submit') Guardar
+
         #mainDiv.pt-5
+            .container.chartData.p-4.rounded-3.mb-4
+                canvas#myChart(width="400" height="400")
             .container.tableData.p-4.rounded-3
+                .buttons.d-flex.justify-content-end
+                    button.btn.btn-primary(data-bs-toggle="modal" data-bs-target="#addValueModal") Añadir valor
                 table.table.table-dark.text-center.caption-top
                     caption Lista de datos
                     thead
@@ -22,18 +46,14 @@ html(lang="en")
                         th(scope='col') Fecha
                         th(scope='col') Peso
                     tbody
-                        tr
-                            th 1
-                            td Mark
-                            td Otto
-                        tr
-                            th 2
-                            td Jacob
-                            td Otto
-                        tr
-                            th 3
-                            td Larry the Bird
-                            td Otto
+                        each weight in userWeightData
+                            tr
+                                th #{weight.id}
+                                td #{weight.date}
+                                td #{weight.value}
+        script(src='https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js')
+        script(src='/static/js/weight.js')
+
 
 
 
