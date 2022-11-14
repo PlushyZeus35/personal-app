@@ -1,5 +1,5 @@
 
-const User = require('./User');
+const User = require('./user');
 const Weight = require('./Weight');
 
 // Users - Weights relation
