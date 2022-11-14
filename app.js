@@ -38,7 +38,7 @@ app.set('view engine', 'pug');
 // MIDDLEWARES
 app.use(express.urlencoded({extended:false}));
 app.use(session({
-    secret: 'pluslearnsession',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: new MariaDBStore(database)
