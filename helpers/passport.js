@@ -9,12 +9,16 @@ passport.use(new LocalStrategy({
 }, async (req, username, password, done) => {
     console.log({username, password});
     const userSelected = await UserListener.getUserByUsername(username);
-    console.log(JSON.stringify(userSelected, null, 4));
-    console.log(password);
-    console.log(userSelected[0].password);
-    if(password == userSelected[0].password){
-        console.log("a")
-        done(null, userSelected[0], req.flash('Success', 'Success'));
+    if(userSelected.length >0){
+        console.log(JSON.stringify(userSelected, null, 4));
+        console.log(password);
+        console.log(userSelected[0].password);
+        if(password == userSelected[0].password){
+            console.log("a")
+            done(null, userSelected[0], req.flash('Success', 'Success'));
+        }else{
+            done(null, false, req.flash('Success', 'Success'));
+        }
     }else{
         done(null, false, req.flash('Success', 'Success'));
     }
