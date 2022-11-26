@@ -10,4 +10,12 @@ UserListener.getUserByUsername = async (username) => {
     });
 }
 
+UserListener.setNewUser = async (username, password, mail) => {
+    return await User.create({
+        username: username,
+        password: password,
+        email: mail
+    })
+}
+
 module.exports = UserListener;

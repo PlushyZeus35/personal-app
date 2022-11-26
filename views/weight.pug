@@ -14,6 +14,14 @@ html(lang="en")
         link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin='')
         link(href='https://fonts.googleapis.com/css2?family=Pacifico&display=swap' rel='stylesheet')
     body
+        header.p-3.text-bg-dark
+            .container
+                .d-flex.flex-wrap.align-items-center.justify-content-between
+                    .d-flex.align-items-center.mb-2.mb-lg-0.text-white.text-decoration-none
+                        | Hola #{actualUser.username}!
+                    .text-end
+                        a.btn.btn-outline-danger.me-2(href='/logout') Salir
+
         #addValueModal.modal.fade(tabindex='-1' aria-labelledby='addValueModal' aria-hidden='true')
             .modal-dialog.modal-dialog-centered.modal-fullscreen-sm-down
                 .modal-content
@@ -32,7 +40,7 @@ html(lang="en")
                                 button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cerrar
                                 button.btn.btn-primary(type='submit') Guardar
 
-        #mainDiv.pt-5
+        #mainDiv.pt-5.pb-3
             .container.chartData.p-4.rounded-3.mb-4
                 canvas#myChart(width="400" height="400")
             .container.tableData.p-4.rounded-3

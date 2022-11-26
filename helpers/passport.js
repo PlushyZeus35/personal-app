@@ -1,6 +1,7 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const UserListener = require('../helpers/UserListener');
+const Crypto = require('./Crypto');
 
 passport.use(new LocalStrategy({
     usernameField: 'username',
@@ -9,22 +10,17 @@ passport.use(new LocalStrategy({
 }, async (req, username, password, done) => {
     console.log({username, password});
     const userSelected = await UserListener.getUserByUsername(username);
-    if(userSelected.length >0){
-        console.log(JSON.stringify(userSelected, null, 4));
-        console.log(password);
-        console.log(userSelected[0].password);
-        if(password == userSelected[0].password){
-            console.log("a")
+    console.log(JSON.stringify(userSelected, null, 4));
+    console.log(password);
+    if(userSelected.length>0){
+        if(await Crypto.validatePassword(userSelected[0].password, password)){
             done(null, userSelected[0], req.flash('Success', 'Success'));
         }else{
-            done(null, false, req.flash('Success', 'Success'));
+            done(null, false, req.flash('Message', 'Credenciales de acceso incorrectas.'));
         }
     }else{
-        done(null, false, req.flash('Success', 'Success'));
+        done(null, false, req.flash('Message', 'Ese usuario no existe en nuestro sistema.'));
     }
-    //done(null, user, req.flash(Constants.FLASH.SUCCESS, Constants.LABELS.SUCCESS.WELCOME + user.username));
-    //done(null, false, req.flash(Constants.FLASH.ERROR, Constants.LABELS.ERROR.INCORRECT_PASSWORD));
-    //(null, false, req.flash(Constants.FLASH.ERROR, Constants.LABELS.ERROR.USERNAME_DONT_EXIST));
 }))
 
 passport.serializeUser(function(user, done) {
