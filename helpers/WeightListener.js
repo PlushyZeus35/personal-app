@@ -21,4 +21,8 @@ WeightListener.setNewWeight = async (date, value, userId) => {
     });
 }
 
+WeightListener.getAllWeights = async () => {
+    return await Weight.findAll();
+}
+
 module.exports = WeightListener;

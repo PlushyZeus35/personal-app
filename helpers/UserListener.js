@@ -18,4 +18,8 @@ UserListener.setNewUser = async (username, password, mail) => {
     })
 }
 
+UserListener.getAllUsers = async () => {
+    return await User.findAll();
+}
+
 module.exports = UserListener;
