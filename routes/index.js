@@ -3,6 +3,8 @@ const { isLoggedIn } = require('../helpers/Authentication');
 const UserListener = require('../helpers/UserListener');
 const WeightListener = require('../helpers/WeightListener');
 const Crypto = require('../helpers/Crypto');
+const Binance = require('../helpers/BinanceHelper');
+const BinanceListener = require('../helpers/BinanceListener');
 var router = express.Router();
 
 /* GET Index page. */

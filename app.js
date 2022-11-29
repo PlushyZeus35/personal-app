@@ -19,7 +19,6 @@ sequelize.sync( {force: false }).then(async () => {
     console.log("Se ha producido un error!", error);
 }); 
 require('./helpers/passport');
-require('./helpers/Cron');
 
 // SETTINGS
 // Set static path to serve static files
