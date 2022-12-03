@@ -22,4 +22,12 @@ UserListener.getAllUsers = async () => {
     return await User.findAll();
 }
 
+UserListener.updateUser = async (userId, userEmail) => {
+    return await User.update({ email: userEmail } , {
+        where: {
+            id: userId
+        }
+    });
+}
+
 module.exports = UserListener;

@@ -1,0 +1,63 @@
+doctype html
+html(lang="en")
+    head
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Personal App
+        link(href='https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css' rel='stylesheet' integrity='sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi' crossorigin='anonymous')
+        script(src='https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js' integrity='sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3' crossorigin='anonymous')
+        link(rel="stylesheet", href="static/css/profile.css")
+        link(rel='preconnect' href='https://fonts.googleapis.com')
+        link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin='')
+        link(href='https://fonts.googleapis.com/css2?family=Pacifico&display=swap' rel='stylesheet')
+    body 
+
+        #exampleModal.modal.fade(tabindex='-1' aria-labelledby='exampleModalLabel' aria-hidden='true')
+            .modal-dialog.modal-dialog-centered
+                .modal-content
+                    .modal-header
+                        h1#exampleModalLabel.modal-title.fs-5 Editar perfil
+                        button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                    .modal-body
+                        form(action="/profile" method="POST") 
+                            .input-group.mb-3
+                                span#basic-addon1.input-group-text @
+                                input#editedUsername.form-control(type='text' placeholder='Username' aria-label='Username' aria-describedby='basic-addon1' disabled)
+                            .input-group.mb-3
+                                span#inputGroupPrepend.input-group-text 
+                                    svg.bi.bi-envelope-fill(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                                        path(d='M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555ZM0 4.697v7.104l5.803-3.558L0 4.697ZM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757Zm3.436-.586L16 11.801V4.697l-5.803 3.546Z')
+                                input#editedEmail.form-control(type='email' aria-describedby='inputGroupPrepend' required name='editedEmail')
+                            a.link.d-none(href="#") Cambiar contraseña 
+                            .modal-footer
+                                button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cancelar
+                                button.btn.btn-primary(type='submit') Guardar
+
+        header.p-3.text-bg-dark
+            .container
+                .d-flex.flex-wrap.align-items-center.justify-content-between
+                    .d-flex.align-items-center.mb-2.mb-lg-0.text-white.text-decoration-none
+                        | Hola #{user.username}!
+                    .text-end
+                        a.btn.btn-outline-info.me-2(href='/') Inicio
+                        a.btn.btn-outline-danger.me-2(href='/logout') Salir
+        #main.d-flex.justify-content-center.align-items-center
+            .profileCard.d-flex.flex-column.align-items-center.px-5
+                .mainInfo.d-flex.flex-column.justify-content-center.align-items-center
+                    img(src="./static/mine.png", alt="user avatar")
+                    .text-center 
+                        h3#username #{user.username} 
+                        h5#email.fst-italic #{user.email}
+                .secondaryInfo.d-flex.mt-3.d-none
+                    .secinfo.d-flex.flex-column.p-3.align-items-center.justify-content-center
+                        span.title.fs-5 Util 1
+                        span.info.fs-3.fw-bold 23
+                    .secinfo.d-flex.flex-column.p-3.align-items-center.justify-content-center
+                        span.title.fs-5 Util 1
+                        span.info.fs-3.fw-bold 23
+                .ternaryInfo.d-flex.mt-3
+                    button#btnEditProfile.btn.btn-info.me-3(data-bs-toggle="modal" data-bs-target="#exampleModal") Editar
+                    button.btn.btn-outline-danger Eliminar
+        script(src='https://code.jquery.com/jquery-3.6.1.min.js' integrity='sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=' crossorigin='anonymous')
+        script(src="./static/js/profile.js")

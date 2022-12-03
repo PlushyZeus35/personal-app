@@ -20,6 +20,7 @@ html(lang="en")
                     .d-flex.align-items-center.mb-2.mb-lg-0.text-white.text-decoration-none
                         | Hola #{actualUser.username}!
                     .text-end
+                        a.btn.btn-outline-info.me-2(href='/profile') Perfil
                         a.btn.btn-outline-danger.me-2(href='/logout') Salir
 
         #addValueModal.modal.fade(tabindex='-1' aria-labelledby='addValueModal' aria-hidden='true')

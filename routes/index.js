@@ -19,6 +19,17 @@ router.get('/login', (req, res) => {
     res.render('login');
 })
 
+router.get('/profile', isLoggedIn, (req, res) => {
+    res.render('profile', {user: req.user});
+})
+
+router.post('/profile', isLoggedIn, async (req, res) => {
+    const email = req.body.editedEmail;
+    await UserListener.updateUser(req.user.id,email);
+    req.user.email = email;
+    res.redirect('/profile');
+})
+
 /* GET Login page. */
 router.get('/registro', (req, res) => {
     res.render('register');
