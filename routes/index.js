@@ -5,6 +5,7 @@ const WeightListener = require('../helpers/WeightListener');
 const Crypto = require('../helpers/Crypto');
 const Binance = require('../helpers/BinanceHelper');
 const BinanceListener = require('../helpers/BinanceListener');
+const BirthdayListener = require('../helpers/BirthdayListener');
 var router = express.Router();
 
 /* GET Index page. */
@@ -21,6 +22,28 @@ router.get('/login', (req, res) => {
 
 router.get('/profile', isLoggedIn, (req, res) => {
     res.render('profile', {user: req.user});
+})
+
+router.get('/birthday', isLoggedIn,async (req, res) => {
+    const birthdays = await BirthdayListener.getBirthdays(req.user.id);
+    res.render('birthday', {birthdays: birthdays});
+})
+
+router.post('/birthday', isLoggedIn, async (req, res) => {
+    const birthname = req.body.birthname;
+    const birthday = req.body.birthday;
+    const birthmonth = req.body.birthmonth;
+    const newBirth = await BirthdayListener.setBirthday(birthname,birthday,birthmonth,req.user.id);
+    res.redirect('/birthday');
+})
+
+router.post('/editbirthday', isLoggedIn, async (req, res) => {
+    const birthId = req.body.birthid;
+    const birthname = req.body.birthname;
+    const birthday = req.body.birthday;
+    const birthmonth = req.body.birthmonth;
+    const newBirth = await BirthdayListener.updateBirthday(birthname,birthday,birthmonth,birthId);
+    res.redirect('/birthday');
 })
 
 router.post('/profile', isLoggedIn, async (req, res) => {
