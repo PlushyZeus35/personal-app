@@ -17,13 +17,36 @@ const chartData = {
       data: data,
       fill: false,
       borderColor: 'rgb(75, 192, 192)',
-      tension: 0.1
+      tension: 0.35
     }]
 };
 
 const config = {
     type: 'line',
     data: chartData,
+    options: {
+        plugins: {
+            title:{
+                display: true,
+                text: 'Tu progreso'
+            },
+            datalabels: {
+              display: false
+            },
+            legend: {
+                display: false
+            }
+        },
+        pointStyle: 'circle',
+        scales: {
+            x: {
+                display: false
+            },
+            y: {
+                display: false
+            }
+        }
+    }
 };
 
 const myChart = new Chart(ctx, config);
