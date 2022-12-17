@@ -46,6 +46,16 @@ router.post('/editbirthday', isLoggedIn, async (req, res) => {
     res.redirect('/birthday');
 })
 
+router.get('/birthday/delete/:id', isLoggedIn, async(req, res) => {
+    const birthId = req.params.id;
+    const birth  = await BirthdayListener.getBirthday(birthId);
+    req.flash('Message', 'Ese usuario no existe en nuestro sistema.');
+    if(birth.userId == req.user.id){
+        const result = await BirthdayListener.deleteBirthday(birthId);
+    }
+    res.redirect('/birthday');
+})
+
 router.post('/profile', isLoggedIn, async (req, res) => {
     const email = req.body.editedEmail;
     await UserListener.updateUser(req.user.id,email);

@@ -9,6 +9,18 @@ BirthdayListener.getBirthdays = async(userId) => {
     })
 }
 
+BirthdayListener.getBirthday = async(birthId) => {
+    return await Birthday.findByPk(birthId);
+}
+
+BirthdayListener.deleteBirthday = async (birthId) => {
+    return await Birthday.destroy({
+        where: {
+            id: birthId
+        }
+    })
+}
+
 BirthdayListener.setBirthday = async (name, day, month, userId) => {
     return await Birthday.create({
         name: name,

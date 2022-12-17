@@ -16,7 +16,7 @@ html(lang="en")
             .modal-dialog.modal-dialog-centered
                 .modal-content
                     .modal-header
-                        h1#staticBackdropLabel.modal-title.fs-5 Modal title
+                        h1#staticBackdropLabel.modal-title.fs-5 Añadir cumpleaños
                         button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
                     .modal-body
                         form(action="/birthday" method="POST")
@@ -49,7 +49,7 @@ html(lang="en")
             .modal-dialog.modal-dialog-centered
                 .modal-content
                     .modal-header
-                        h1#staticBackdropLabel.modal-title.fs-5 Modal title
+                        h1#staticBackdropLabel.modal-title.fs-5 Editar cumpleaños
                         button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
                     .modal-body
                         form(action="/editbirthday" method="POST")
@@ -78,7 +78,7 @@ html(lang="en")
                                     option(value='12') Diciembre
                             .modal-footer
                                 button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cerrar
-                                button.btn.btn-danger(type='button') Eliminar
+                                a#deleteBirthButton.btn.btn-danger(href="#") Eliminar
                                 button.btn.btn-primary(type='submit') Guardar
 
         
