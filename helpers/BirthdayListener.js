@@ -5,6 +5,19 @@ BirthdayListener.getBirthdays = async(userId) => {
     return await Birthday.findAll({
         where: {
             userId: userId
+        },
+        order: ['day']
+    })
+}
+
+BirthdayListener.getBirthday = async(birthId) => {
+    return await Birthday.findByPk(birthId);
+}
+
+BirthdayListener.deleteBirthday = async (birthId) => {
+    return await Birthday.destroy({
+        where: {
+            id: birthId
         }
     })
 }

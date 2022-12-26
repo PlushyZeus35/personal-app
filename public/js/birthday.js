@@ -95,5 +95,6 @@ function selectedBirthday(){
 	$("#editedName")[0].value = name;
 	$("#editedDay")[0].value = day;
 	$("#editedMonth")[0].value = month;
+	$("#deleteBirthButton")[0].href = "/birthday/delete/" + selectedId;
 	editModal.show();
 }

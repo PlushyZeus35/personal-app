@@ -41,10 +41,6 @@ h2{
     }
 }
 
-.bi-bug-fill{
-    color: #dc3545;
-}
-
 @media screen and (max-width: 1000px) {
     .mainCard{
         height: 100%;

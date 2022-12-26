@@ -34,6 +34,9 @@ router.post('/birthday', isLoggedIn, async (req, res) => {
     const birthday = req.body.birthday;
     const birthmonth = req.body.birthmonth;
     const newBirth = await BirthdayListener.setBirthday(birthname,birthday,birthmonth,req.user.id);
+    if(newBirth){
+        req.flash('Success', ['Actualización correcta', 'El cumpleaños ha sido añadido con éxito.']);
+    }
     res.redirect('/birthday');
 })
 
@@ -43,6 +46,17 @@ router.post('/editbirthday', isLoggedIn, async (req, res) => {
     const birthday = req.body.birthday;
     const birthmonth = req.body.birthmonth;
     const newBirth = await BirthdayListener.updateBirthday(birthname,birthday,birthmonth,birthId);
+    res.redirect('/birthday');
+})
+
+router.get('/birthday/delete/:id', isLoggedIn, async(req, res) => {
+    const birthId = req.params.id;
+    const birth  = await BirthdayListener.getBirthday(birthId);
+    if(birth.userId == req.user.id){
+        if(await BirthdayListener.deleteBirthday(birthId)>0){
+            req.flash('Success', ['Actualización correcta', 'El cumpleaños ha sido eliminado con éxito.']);
+        }
+    }
     res.redirect('/birthday');
 })
 
