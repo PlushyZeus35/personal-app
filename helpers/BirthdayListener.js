@@ -5,7 +5,8 @@ BirthdayListener.getBirthdays = async(userId) => {
     return await Birthday.findAll({
         where: {
             userId: userId
-        }
+        },
+        order: ['day']
     })
 }
 

@@ -16,10 +16,10 @@ passport.use(new LocalStrategy({
         if(await Crypto.validatePassword(userSelected[0].password, password)){
             done(null, userSelected[0], req.flash('Success', 'Success'));
         }else{
-            done(null, false, req.flash('Message', 'Credenciales de acceso incorrectas.'));
+            done(null, false, req.flash('Message', ['Error de inicio de sesión', 'Credenciales de acceso incorrectas.']));
         }
     }else{
-        done(null, false, req.flash('Message', 'Ese usuario no existe en nuestro sistema.'));
+        done(null, false, req.flash('Message', ['Error de inicio de sesión', 'Ese usuario no existe en nuestro sistema.']));
     }
 }))
 
