@@ -34,18 +34,11 @@ html(lang="en")
                                 button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cancelar
                                 button.btn.btn-primary(type='submit') Guardar
 
-        header.p-3.text-bg-dark
-            .container
-                .d-flex.flex-wrap.align-items-center.justify-content-between
-                    .d-flex.align-items-center.mb-2.mb-lg-0.text-white.text-decoration-none
-                        | Hola #{user.username}!
-                    .text-end
-                        a.btn.btn-outline-info.me-2(href='/') Inicio
-                        a.btn.btn-outline-danger.me-2(href='/logout') Salir
+        include includes/header.pug
         #main.d-flex.justify-content-center.align-items-center
             .profileCard.d-flex.flex-column.align-items-center.px-5
                 .mainInfo.d-flex.flex-column.justify-content-center.align-items-center
-                    img(src="./static/mine.png", alt="user avatar")
+                    img(src="./static/img/mine.png", alt="user avatar")
                     .text-center 
                         h3#username #{user.username} 
                         h5#email.fst-italic #{user.email}

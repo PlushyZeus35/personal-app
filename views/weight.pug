@@ -14,16 +14,7 @@ html(lang="en")
         link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin='')
         link(href='https://fonts.googleapis.com/css2?family=Pacifico&display=swap' rel='stylesheet')
     body
-        header.p-3.text-bg-dark
-            .container
-                .d-flex.flex-wrap.align-items-center.justify-content-between
-                    .d-flex.align-items-center.mb-2.mb-lg-0.text-white.text-decoration-none
-                        | Hola #{actualUser.username}!
-                    .text-end
-                        a.btn.btn-outline-warning.me-2(href='/birthday') Cumples
-                        a.btn.btn-outline-info.me-2(href='/profile') Perfil
-                        a.btn.btn-outline-danger.me-2(href='/logout') Salir
-
+        include includes/header.pug
         #addValueModal.modal.fade(tabindex='-1' aria-labelledby='addValueModal' aria-hidden='true')
             .modal-dialog.modal-dialog-centered.modal-fullscreen-sm-down
                 .modal-content
