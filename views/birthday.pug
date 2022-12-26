@@ -84,14 +84,7 @@ html(lang="en")
                                 button.btn.btn-primary(type='submit') Guardar
 
         
-        header.p-3.text-bg-dark
-            .container
-                .d-flex.flex-wrap.align-items-center.justify-content-between
-                    .d-flex.align-items-center.mb-2.mb-lg-0.text-white.text-decoration-none
-                        | Hola plushy!
-                    .text-end
-                        a.btn.btn-outline-info.me-2(href='/') Inicio
-                        a.btn.btn-outline-danger.me-2(href='/logout') Salir
+        include includes/header.pug
         #main.p-5.d-flex.flex-column.align-items-center
             .container
                 button.btn.btn-primary.ms-3(data-bs-toggle="modal" data-bs-target="#newBirthModal") Nuevo cumple
