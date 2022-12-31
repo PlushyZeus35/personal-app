@@ -1,0 +1,54 @@
+#mainDiv{
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+ 
+    50% {
+        background-position: 100% 50%;
+    }
+ 
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.tableBookInit{
+    background-color: rgba(95, 47, 198, 0.7); /* #5f2fc6 */
+    border: 2px solid #5f2fc6;
+}
+
+.tableBookOwned{
+    background-color: rgba(47, 103, 198, 0.7); /* #2f67c6 */
+    border: 2px solid #2f67c6;
+}
+
+.tableBookFinish{
+    background-color: rgba(47, 198, 57, 0.7); /* #2fc639 */
+    border: 2px solid #2fc639;
+}
+
+.bookTitle{
+    font-weight: bold;
+    font-size: large;
+}
+
+.bookAuthor{
+    font-style: italic;
+}
+
+.bookPages{
+    font-weight: bold;
+}
+
+.bookPagesNum{
+    font-weight: lighter;
+}
