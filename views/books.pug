@@ -1,0 +1,161 @@
+doctype html
+html(lang="en")
+    head
+        script.
+            var books = !{JSON.stringify(books)};
+        include includes/flashMessagesInit.pug
+        meta(charset="UTF-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
+        meta(name="viewport", content="width=device-width, initial-scale=1.0")
+        title Personal App
+        include includes/bootstrap.pug
+        link(rel="stylesheet", href="static/css/books.css")
+    body 
+        include includes/flashMessages.pug
+        include includes/header.pug
+        // Modals
+        #addBookModal.modal.fade(tabindex='-1' aria-labelledby='addBookModal' aria-hidden='true')
+            .modal-dialog.modal-dialog-centered.modal-fullscreen-sm-down
+                .modal-content
+                    .modal-header
+                        h1#exampleModalLabel.modal-title.fs-5 Nuevo libro
+                        button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                    .modal-body
+                        form(action="/libros" method="POST") 
+                            .mb-3
+                                label.form-label(for="titleInput") Titulo
+                                input#titleInput.form-control(type="text" name="bookTitle" required)
+                            .mb-3
+                                label.form-label(for="authorInput") Autor
+                                input#authorInput.form-control(type="text" name="bookAuthor" required)
+                            .mb-3
+                                label.form-label(for="pagesInput") Páginas
+                                input#pagesInput.form-control(type="number" name="bookPages" required)
+                            .modal-footer
+                                button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cerrar
+                                button.btn.btn-primary(type='submit') Guardar
+        #readBookModal.modal.fade(tabindex='-1' aria-labelledby='addBookModal' aria-hidden='true')
+            .modal-dialog.modal-dialog-centered.modal-fullscreen-sm-down
+                .modal-content
+                    .modal-header
+                        h1#exampleModalLabel.modal-title.fs-5 Leer libro
+                        button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                    .modal-body
+                        form(action="/readBook" method="POST") 
+                            input#bookId.form-control.d-none(type="text" name="bookId")
+                            .mb-3.d-none 
+                                input#automaticInitDateInput.form-check-input.me-2(type="checkbox" value="" checked)
+                                label.form-check-label(for="automaticInitDateInput") Asignar fecha de inicio automáticamente
+                            .mb-3.d-none
+                                input#automaticFinishDateInput.form-check-input.me-2(type="checkbox" value="" checked)
+                                label.form-check-label(for="automaticFinishDateInput") Asignar fecha de fin automáticamente 
+                            .mb-3
+                                label.form-label(for="initDateInput") Fecha de Inicio
+                                input#initDateInput.form-control(type="date" name="initDate" required)
+                            .mb-3
+                                label.form-label(for="finishDateInput") Fecha de Fin
+                                input#finishDateInput.form-control(type="date" name="finishDate" required)
+                            .mb-3
+                                label.form-label(for="daysInput") Días
+                                input#daysInput.form-control(type="text" disabled)
+                            .mb-3
+                                label.form-label(for="pagesInput") Páginas
+                                input#pageInput.form-control(type="number" disabled)
+                            .mb-3
+                                label.form-label(for="ppdInput") PPD
+                                input#ppdInput.form-control(type="number" step="0.1" name="predictedPPD" readonly="readonly")
+                            .modal-footer
+                                button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cerrar
+                                button.btn.btn-primary(type='submit') Guardar
+        #finishBookModal.modal.fade(tabindex='-1' aria-labelledby='addBookModal' aria-hidden='true')
+            .modal-dialog.modal-dialog-centered.modal-fullscreen-sm-down
+                .modal-content
+                    .modal-header
+                        h1#exampleModalLabel.modal-title.fs-5 Terminar libro
+                        button.btn-close(type='button' data-bs-dismiss='modal' aria-label='Close')
+                    .modal-body
+                        p Has terminado este libro?
+                        form(action="/finishBook" method="POST")
+                            .mb-3
+                                label.form-label(for="predictedDateInput") Fecha de Fin (Predicción)
+                                input#predictedDateInput.form-control(type="date" readonly="readonly")
+                            .mb-3
+                                label.form-label(for="endDateInput") Fecha de Fin
+                                input#endDateInput.form-control(type="date" name="endDate" readonly="readonly")
+                            .mb-3
+                                label.form-label(for="predictedDateInput") PPD (Predicción)
+                                input#predictedPPDInput.form-control(type="number" readonly="readonly")
+                            .mb-3
+                                label.form-label(for="endDateInput") PPD
+                                input#PPDfinal.form-control(type="number" name="ppdFinal" readonly="readonly")
+                            input#bookIdFinishedBook.form-control.d-none(type="number" name="bookId")
+                            .modal-footer
+                                button.btn.btn-secondary(type='button' data-bs-dismiss='modal') Cerrar
+                                button.btn.btn-primary(type='submit') Libro leído
+
+        #mainDiv
+            .container.p-4 
+                .d-grid
+                    button.btn.btn-primary
+                        svg.bi.bi-chevron-down.me-2(xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' viewbox='0 0 16 16')
+                            path(fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z')
+                        |Estadisticas
+            .container.ps-4.pe-4 
+                .button.btn.btn-primary(data-bs-toggle="modal" data-bs-target="#addBookModal") Nuevo libro
+            .container
+                .row 
+                    .col-12.col-md-6.col-lg-4.p-4
+                        .tableBook.tableBookInit.p-4.rounded.text-white
+                            .tableBookTitle.text-center 
+                                h3 En reserva
+                            .tableBookList.pt-4
+                                each book in books
+                                    if !book.owned
+                                        .bookContainer.p-2.border.border-info.mb-2.rounded
+                                            .bookHeader.d-flex.flex-column.text-center
+                                                span.bookTitle #{book.title}
+                                                span.bookAuthor #{book.author}
+                                                span.bookPages Pag: 
+                                                    span.bookPagesNum #{book.pages}
+                                            .bookOptions.d-flex.justify-content-center.align-items-center.mt-2
+                                                button.btn.btn-primary.me-3(id=book.id onclick="onclickReadButton(" + book.id + ")" data-bs-toggle="modal" data-bs-target="#readBookModal") Leer 
+                                                a.btn.btn-outline-danger(href="/deleteBook/" + book.id) Eliminar
+                    .col-12.col-md-6.col-lg-4.p-4
+                        .tableBook.tableBookOwned.p-4.rounded.text-white
+                            .tableBookTitle.text-center 
+                                h3 En progreso
+                            .tableBookList.pt-4
+                                each book in books
+                                    if book.owned && !book.finished
+                                        .bookContainer.p-2.border.border-info.mb-2.rounded
+                                            .bookHeader.d-flex.flex-column.text-center
+                                                span.bookTitle #{book.title}
+                                                span.bookPages Inicio: 
+                                                    span.bookPagesNum #{book.initDate}
+                                                span.bookPages Fin: 
+                                                    span.bookPagesNum #{book.predictedFinished}
+                                                span.bookPages PPD: 
+                                                    span.bookPagesNum #{book.predictedPPD}
+                                            .bookOptions.d-flex.justify-content-center.align-items-center.mt-2
+                                                button.btn.btn-success.me-3(id=book.id onclick="onclickFinishButton(" + book.id + ")" data-bs-toggle="modal" data-bs-target="#finishBookModal") Terminar 
+                                                a.btn.btn-outline-danger(href="/deleteBook/" + book.id) Eliminar
+                    .col-12.col-md-6.col-lg-4.p-4
+                        .tableBook.tableBookFinish.p-4.rounded.text-white
+                            .tableBookTitle.text-center 
+                                h3 Terminados
+                            .tableBookList.pt-4 
+                                each book in books
+                                    if book.finished
+                                        .bookContainer.p-2.border.border-info.mb-2.rounded
+                                            .bookHeader.d-flex.flex-column.text-center
+                                                span.bookTitle #{book.title}
+                                                span.bookPages Inicio: 
+                                                    span.bookPagesNum #{book.initDate}
+                                                span.bookPages Fin: 
+                                                    span.bookPagesNum #{book.finishDate}
+                                                span.bookPages PPD: 
+                                                    span.bookPagesNum #{book.PPD}
+                                            .bookOptions.d-flex.justify-content-center.align-items-center.mt-2
+                                                a.btn.btn-outline-danger(href="/deleteBook/" + book.id) Eliminar
+        script(src='https://code.jquery.com/jquery-3.6.3.min.js' integrity='sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=' crossorigin='anonymous')
+        script(src="/static/js/books.js")

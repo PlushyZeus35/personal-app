@@ -6,6 +6,7 @@ const Crypto = require('../helpers/Crypto');
 const Binance = require('../helpers/BinanceHelper');
 const BinanceListener = require('../helpers/BinanceListener');
 const BirthdayListener = require('../helpers/BirthdayListener');
+const BookListener = require('../helpers/BookListener');
 var router = express.Router();
 
 /* GET Index page. */
@@ -67,7 +68,6 @@ router.post('/profile', isLoggedIn, async (req, res) => {
     res.redirect('/profile');
 })
 
-/* GET Login page. */
 router.get('/registro', (req, res) => {
     res.render('register');
 })
@@ -77,6 +77,56 @@ router.post('/weights', isLoggedIn, async (req, res) => {
     const dateValue = req.body.dateValue;
     const newWeight = await WeightListener.setNewWeight(dateValue, weightValue, req.user.id);
     res.redirect('/');
+})
+
+router.get('/libros', isLoggedIn,async (req, res) => {
+    const userBooks = await BookListener.getBooks(req.user.id);
+    console.log(userBooks);
+    res.render('books', {books: userBooks});
+})
+
+router.post('/libros', isLoggedIn,async (req, res) => {
+    const bookTitle = req.body.bookTitle;
+    const bookAuthor = req.body.bookAuthor;
+    const bookPages = req.body.bookPages;
+    const userId = req.user.id;
+    const rest = await BookListener.setBook(bookTitle, bookAuthor, bookPages, userId);
+    console.log({bookAuthor, bookTitle, bookPages})
+    console.log(rest);
+    res.redirect('/libros');
+})
+
+router.post('/readBook', isLoggedIn, async (req, res) => {
+    const bookId = req.body.bookId;
+    const initDate = new Date(req.body.initDate);
+    const finishDate = new Date(req.body.finishDate);
+    const predictedPPD = parseFloat(req.body.predictedPPD);
+    console.log(req.body)
+    console.log({initDate, finishDate, predictedPPD});
+    await BookListener.updateBookDates(initDate,null,finishDate,bookId);
+    await BookListener.updateBookPPD(predictedPPD, null, bookId);
+    await BookListener.updateBookStatus(true, true, false, bookId);
+
+    res.redirect('/libros');
+})
+
+router.post('/finishBook', isLoggedIn, async (req, res) => {
+    const bookId = req.body.bookId;
+    const endPPD = req.body.ppdFinal;
+    const endDate = req.body.endDate;
+    const selectedBook = await BookListener.getBook(bookId);
+    console.log({bookId, endPPD, endDate});
+    await BookListener.updateBookDates(selectedBook.initDate, endDate, selectedBook.predictedFinished, bookId);
+    await BookListener.updateBookPPD(selectedBook.predictedPPD, endPPD, bookId);
+    await BookListener.updateBookStatus(true,true,true,bookId);
+    res.redirect('/libros');
+})
+
+router.get('/deleteBook/:bookId', isLoggedIn, async (req, res) => {
+    const bookId = req.params.bookId;
+    console.log(bookId);
+    await BookListener.deleteBook(bookId);
+    res.redirect('/libros');
 })
 
 module.exports = router;
