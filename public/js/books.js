@@ -34,8 +34,16 @@ function onclickFinishButton(buttonId){
     const selectedBook = books.filter(i => i.id==buttonId)[0];
     console.log(selectedBook.predictedFinished);
     const today = new Date(Date.now());
-    const month = today.getMonth() + 1;
-    const currentDate = today.getFullYear() + '-' + month + '-' + today.getDate();
+    let month = today.getMonth() + 1;
+    if(month<10){
+        month = '0'+month;
+    }
+    let day = today.getDate();
+    if(day<10){
+        day = '0'+day;
+    }
+    const currentDate = today.getFullYear() + '-' + month + '-' + day;
+    console.log(currentDate)
     $("#bookIdFinishedBook")[0].value = buttonId;
     $("#predictedDateInput")[0].value = selectedBook.predictedFinished;
     $("#predictedPPDInput")[0].value = selectedBook.predictedPPD;

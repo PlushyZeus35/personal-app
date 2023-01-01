@@ -11,9 +11,29 @@ var router = express.Router();
 
 /* GET Index page. */
 router.get('/', isLoggedIn,async (req, res) => {
-    const actualUser = req.user;
-    const userWeightData = await WeightListener.getUsersWeights(req.user.id);
-    res.render('weight',{userWeightData, actualUser});
+    const nextBirthdays = await BirthdayListener.getNextBirthdays(3, req.user.id);
+    console.log(nextBirthdays);
+    const thisMonthBirthdaysCount = await BirthdayListener.getCountBirthdaysMonth(new Date(Date.now()).getMonth()+1, req.user.id);
+    const activeBooks = await BookListener.getActiveBook(req.user.id);
+    let activeBook = [];
+    for(let i=0; i<activeBooks.length; i++){
+        if(new Date(activeBooks[i].initDate) < new Date(Date.now())){
+            activeBook.push(activeBooks[i])
+        } 
+    }
+    const today = Date.now();
+    console.log(today)
+    let percentage = 0;
+    if(activeBook.length>0){
+        let diffInitToday = (today - new Date(activeBook[0].initDate).getTime()) / (1000 * 3600 * 24);
+        let diffInitEnd = (new Date(activeBook[0].predictedFinished).getTime() - new Date(activeBook[0].initDate).getTime()) / (1000 * 3600 * 24);
+        //const bookInitDate = new Date(activeBook[0].initDate).getTime();
+        //const bookFinishDate = new Date(activeBook[0].predictedFinished).getTime() - bookInitDate;
+        percentage = Math.round((diffInitToday/diffInitEnd) * 100);
+    }
+    console.log(percentage)
+    const userWeights = await WeightListener.getUsersWeights(req.user.id);
+    res.render('home', {nextBirthdays: nextBirthdays, thisMonthBirthdaysCount: thisMonthBirthdaysCount, activeBook: activeBook, bookPercentage: percentage, userWeights: userWeights});
 })
 
 /* GET Login page. */
@@ -70,6 +90,12 @@ router.post('/profile', isLoggedIn, async (req, res) => {
 
 router.get('/registro', (req, res) => {
     res.render('register');
+})
+
+router.get('/weights', isLoggedIn, async (req, res) => {
+    const actualUser = req.user;
+    const userWeightData = await WeightListener.getUsersWeights(req.user.id);
+    res.render('weight',{userWeightData, actualUser});
 })
 
 router.post('/weights', isLoggedIn, async (req, res) => {
