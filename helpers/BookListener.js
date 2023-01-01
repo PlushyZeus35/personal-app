@@ -59,4 +59,14 @@ BookListener.updateBookPPD = async(predictedPPD, PPD, bookId) => {
     })
 }
 
+BookListener.getActiveBook = async(userId) => {
+    return await Book.findAll({
+        where: {
+            userId: userId,
+            reading: true,
+            finished: false
+        }
+    })
+}
+
 module.exports = BookListener;

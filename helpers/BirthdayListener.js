@@ -41,4 +41,23 @@ BirthdayListener.updateBirthday = async (name,day,month, birthId) => {
     })
 }
 
+BirthdayListener.getNextBirthdays = async (num, userId) => {
+    return await Birthday.findAll({
+        where: {
+            userId: userId
+        },
+        order: ['month','day'],
+        limit: num
+    })
+}
+
+BirthdayListener.getCountBirthdaysMonth = async (month, userId) => {
+    return await Birthday.count({
+        where: {
+            userId: userId,
+            month: month
+        }
+    })
+}
+
 module.exports = BirthdayListener;

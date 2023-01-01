@@ -1,0 +1,116 @@
+#mainDiv{
+    min-height: 95vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+}
+
+@keyframes gradient {
+    0% {
+        background-position: 0% 50%;
+    }
+ 
+    50% {
+        background-position: 100% 50%;
+    }
+ 
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.mainStat{
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    height: 180px;
+}
+
+#mainStat1{
+    background-color: #95b8d1;
+    border: 3px solid #809bce;
+}
+
+#mainStat2{
+    background-color: #d6eadf;
+    border: 3px solid #b8e0d2;
+}
+
+#mainStat3{
+    background-color: #eac4d5;
+    border: 3px solid #ff5d8f;
+    overflow: hidden;
+}
+
+#mainStat4{
+    background-color: #ffe1cc;
+    border: 3px solid #f59a8e;
+}
+
+.mainStatTitle,.mainStatValue, canvas{
+    font-weight: bold;
+    z-index: 2;
+}
+
+.secondaryStat{
+    background-color: #9dd7fb;
+    border: 3px solid #5aa2f0;
+}
+
+#useravatar{
+    width: 60px;
+}
+
+#coin{
+    width: 30px;
+}
+
+.secondaryInfo .secinfo{
+    width: 90px;
+    height: 90px;
+}
+
+.mainStatValue{
+    font-size: 60px;
+    padding: 0;
+}
+
+.birth{
+    font-size: large;
+}
+
+.progress{
+    width: 30vw;
+}
+
+.mainStatsvg{
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    color: rgba(128, 128, 128, 0.4);
+    transition: scale 3s ease;
+}
+
+.mainStatsvg:hover{
+    /*animation: bigSVG 3s ease 1;*/
+    scale: 1.4;
+}
+
+#weightChartContainer{
+    z-index: 1;
+    max-height: 120px;
+}
+
+@keyframes bigSVG {
+    0% {
+        width: 120px;
+        height: 120px;
+    }
+ 
+    100% {
+        width: 150px; 
+        height: 150px;
+    }
+}
