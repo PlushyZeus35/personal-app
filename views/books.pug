@@ -132,6 +132,8 @@ html(lang="es")
                                                     span.bookPagesNum #{book.predictedFinished}
                                                 span.bookPages PPD: 
                                                     span.bookPagesNum #{book.predictedPPD}
+                                                span.bookPages Leídas: 
+                                                    span.bookPagesNum(id='pages' + book.id) 
                                             .bookOptions.d-flex.justify-content-center.align-items-center.mt-2
                                                 button.btn.btn-success.me-3(id=book.id onclick="onclickFinishButton(" + book.id + ")" data-bs-toggle="modal" data-bs-target="#finishBookModal") Terminar 
                                                 a.btn.btn-outline-danger(href="/deleteBook/" + book.id) Eliminar
