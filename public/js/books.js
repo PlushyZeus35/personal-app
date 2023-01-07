@@ -142,3 +142,15 @@ function onclickReadButton(buttonId){
     return initDate.getFullYear() + '-' + month + '-' + day
 }
 */
+calculatePages();
+function calculatePages(){
+    const readingBooks = books.filter(i => i.owned && !i.finished);
+    for(let i=0; i<readingBooks.length; i++){
+        let initDaydiff = parseInt((new Date(Date.now()).getTime() - new Date(readingBooks[i].initDate).getTime()) / (1000 * 3600 * 24));
+        let pages = initDaydiff*readingBooks[i].predictedPPD;
+        if(pages>readingBooks[i].pages){
+            pages = readingBooks[i].pages;
+        }
+        $("#pages" + readingBooks[i].id)[0].innerHTML = pages;
+    }
+}
