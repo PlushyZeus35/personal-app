@@ -4,6 +4,7 @@ const Binance = require('./Binance');
 const CriptoData = require('./CriptoData');
 const Birthday = require('./Birthday');
 const Book = require('./Book');
+const Task = require('./Task');
 
 // Users - Weights relation
 User.hasMany(Weight);
@@ -24,3 +25,7 @@ Birthday.belongsTo(User);
 // Users - Books relation
 User.hasMany(Book);
 Book.belongsTo(User);
+
+// Users - Tasks relation
+User.hasMany(Task);
+Task.belongsTo(User);

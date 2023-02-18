@@ -3,10 +3,12 @@ const { isLoggedIn } = require('../helpers/Authentication');
 const UserListener = require('../helpers/UserListener');
 const WeightListener = require('../helpers/WeightListener');
 const Crypto = require('../helpers/Crypto');
+const TaskListener = require('../helpers/TaskListener');
 const Binance = require('../helpers/BinanceHelper');
 const BinanceListener = require('../helpers/BinanceListener');
 const BirthdayListener = require('../helpers/BirthdayListener');
 const BookListener = require('../helpers/BookListener');
+const Task = require('../models/Task');
 var router = express.Router();
 
 /* GET Index page. */
@@ -153,6 +155,48 @@ router.get('/deleteBook/:bookId', isLoggedIn, async (req, res) => {
     console.log(bookId);
     await BookListener.deleteBook(bookId);
     res.redirect('/libros');
+})
+
+router.get('/tasks', isLoggedIn, async (req, res) => {
+    const userTasks = await TaskListener.getUserTask(req.user.id);
+    res.render('todo', {userTasks: userTasks});
+})
+
+router.get('/tasks/do/:taskId', isLoggedIn, async (req, res) => {
+    const taskId = req.params.taskId;
+    await TaskListener.doTask(taskId);
+    console.log(taskId);
+    res.redirect('/tasks')
+})
+
+router.post('/tasks', isLoggedIn, async (req, res) => {
+    const taskName = req.body.name;
+    const taskType = req.body.type;
+    console.log({taskName, taskType})
+    if(taskName){
+        const daily = taskType?true:false;
+        let userId = req.user.id;
+        const newTask = await TaskListener.createTask(taskName,daily,req.user.id);
+    }
+    res.redirect('/tasks')
+})
+
+router.post('/tasks/delete', isLoggedIn, async (req, res) => {
+    const taskId = req.body.taskId;
+    console.log(taskId);
+    if(taskId){
+        await TaskListener.deleteTask(taskId)
+    }
+    res.redirect('/tasks')
+})
+
+router.post('/tasks/edit', isLoggedIn, async (req, res) => {
+    const taskId = req.body.taskId;
+    const taskName = req.body.name;
+    console.log({taskId, taskName});
+    if(taskId && taskName)
+        await TaskListener.updateTask(taskName,taskId)
+    res.redirect('/tasks');
 })
 
 module.exports = router;
