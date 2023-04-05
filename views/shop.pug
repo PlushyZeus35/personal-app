@@ -1,0 +1,36 @@
+doctype html
+html(lang="en")
+    head
+        include includes/head.pug
+    body.bg-secondary
+        .container-fluid.bg-primary.d-flex.justify-content-center.align-items-center
+            .container.my-4.w-50
+                .mb-3 
+                    label.form-label(for='formFile') Inserta fichero 
+                    input#formFile.form-control(type='file' name='foo')
+                .mb-3 
+                    button.btn.btn-secondary(type='button' onclick="submitHandler()") Enviar
+        .container
+            .d-flex.justify-content-around.align-items-center.border.mt-4 
+                div.text-center
+                    h5 Total
+                    h7 #{total}€
+                div.text-center
+                    h5 Total mes
+                    h7 #{totalThisMonth}€
+            .py-4
+                .row.row-cols-1.row-cols-md-2.g-4
+                    each ticket in tickets
+                        .col
+                            .card.text-center
+                                .card-body
+                                    h5.card-title #{ticket.shop}
+                                    p.card-text Precio: #{ticket.amount}€
+                                    - let link = '/ticket/' + ticket.id
+                                    a.btn.btn-primary(href=link) Mostrar detalle
+                                .card-footer.text-muted
+                                    | #{ticket.date}
+
+        script(src='https://unpkg.com/axios/dist/axios.min.js')
+        script(src='/static/js/shop.js')
+        
