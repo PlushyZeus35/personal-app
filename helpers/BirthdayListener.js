@@ -6,7 +6,7 @@ BirthdayListener.getBirthdays = async(userId) => {
         where: {
             userId: userId
         },
-        order: ['day']
+        order: ['month','day']
     })
 }
 
