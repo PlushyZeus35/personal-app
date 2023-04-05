@@ -5,6 +5,10 @@ const CriptoData = require('./CriptoData');
 const Birthday = require('./Birthday');
 const Book = require('./Book');
 const Task = require('./Task');
+const Buy = require('./Buy');
+const Product = require('./Product');
+const Shop = require('./Shop');
+const Ticket = require('./Ticket');
 
 // Users - Weights relation
 User.hasMany(Weight);
@@ -29,3 +33,17 @@ Book.belongsTo(User);
 // Users - Tasks relation
 User.hasMany(Task);
 Task.belongsTo(User);
+
+Shop.hasMany(Product);
+Product.belongsTo(Shop);
+
+User.hasMany(Buy);
+Buy.belongsTo(User);
+
+Product.hasMany(Buy);
+
+User.hasMany(Ticket);
+Ticket.belongsTo(User);
+
+Ticket.hasMany(Buy);
+Buy.belongsTo(Ticket);

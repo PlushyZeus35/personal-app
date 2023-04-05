@@ -8,13 +8,36 @@ const Binance = require('../helpers/BinanceHelper');
 const BinanceListener = require('../helpers/BinanceListener');
 const BirthdayListener = require('../helpers/BirthdayListener');
 const BookListener = require('../helpers/BookListener');
+const PdfReader = require('../helpers/Pdf2Json');
 const Task = require('../models/Task');
+const multer = require('multer');
+const TicketAdapter = require('../helpers/TicketAdapter');
+const ShopListener = require('../helpers/ShopListener');
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads');
+    },
+    filename: function(req, file, cb) {
+        let userId = req.user ? req.user.id : 0;
+        cb(null, userId + '-' + Date.now() + '-' + file.originalname);
+    }
+})
+const upload = multer({storage:storage});
+var fs = require('fs');
+const { DateTime, DATE_SHORT } = require("luxon");
+const ShopHelper = require('../helpers/ShopHelper');
 var router = express.Router();
 
 /* GET Index page. */
 router.get('/', isLoggedIn,async (req, res) => {
-    const nextBirthdays = await BirthdayListener.getNextBirthdays(3, req.user.id);
-    console.log(nextBirthdays);
+    const userBirthdays = await BirthdayListener.getBirthdays(req.user.id);
+    const nextBirthdays = [];
+    for(let birth of userBirthdays){
+        let birthDate = new Date(2023, birth.month-1, birth.day);
+        if(birthDate>new Date() && nextBirthdays.length<3){
+            nextBirthdays.push(birth)
+        }
+    }
     const thisMonthBirthdaysCount = await BirthdayListener.getCountBirthdaysMonth(new Date(Date.now()).getMonth()+1, req.user.id);
     const activeBooks = await BookListener.getActiveBook(req.user.id);
     let activeBook = [];
@@ -24,7 +47,6 @@ router.get('/', isLoggedIn,async (req, res) => {
         } 
     }
     const today = Date.now();
-    console.log(today)
     let percentage = 0;
     if(activeBook.length>0){
         let diffInitToday = (today - new Date(activeBook[0].initDate).getTime()) / (1000 * 3600 * 24);
@@ -33,7 +55,6 @@ router.get('/', isLoggedIn,async (req, res) => {
         //const bookFinishDate = new Date(activeBook[0].predictedFinished).getTime() - bookInitDate;
         percentage = Math.round((diffInitToday/diffInitEnd) * 100);
     }
-    console.log(percentage)
     const userWeights = await WeightListener.getUsersWeights(req.user.id);
     res.render('home', {nextBirthdays: nextBirthdays, thisMonthBirthdaysCount: thisMonthBirthdaysCount, activeBook: activeBook, bookPercentage: percentage, userWeights: userWeights});
 })
@@ -198,5 +219,135 @@ router.post('/tasks/edit', isLoggedIn, async (req, res) => {
         await TaskListener.updateTask(taskName,taskId)
     res.redirect('/tasks');
 })
+
+router.get('/shop',isLoggedIn ,async(req, res) => {
+    const userBuys = await ShopListener.getUserBuys(req.user.id);
+    const userBuysParsed = await ShopHelper.parseProductsShop(userBuys);
+    const tickets = await ShopListener.getUserTickets(req.user.id);
+    console.log(tickets)
+    let total = 0;
+    for(let ticket of tickets){
+        total += ticket.amount;
+    }
+    let dt = DateTime.now();
+    dt = dt.startOf('month');
+    let startMonth = new Date(dt.toISODate());
+    console.log(startMonth);
+    let thisMonthTickets = tickets.filter( t => new Date(t.date) > startMonth);
+    let totalThisMonth = 0;
+    for(let ticket of thisMonthTickets){
+        totalThisMonth += ticket.amount;
+    }
+    console.log(thisMonthTickets);
+    let topBuys = await ShopHelper.parseTopProducts(userBuysParsed);
+    topBuys = topBuys.slice(0,5);   // top five
+    console.log(topBuys);
+    res.render('shop', {tickets: tickets, buys: userBuysParsed, topBuys: topBuys, total: total, totalThisMonth: totalThisMonth});
+})
+
+router.post('/shop', isLoggedIn, upload.single('myFile'), async (req, res) => {
+    try{
+        const ticketInfo = await PdfReader.getTicketInfo(req.file.path);
+        const shops = await ShopListener.getShops();
+        const availableShops = [];
+        for(let shop of shops){
+            availableShops.push({id: shop.id, name:shop.name});
+        }
+        const ticketObject = await TicketAdapter.parseTicket(ticketInfo,availableShops);
+        console.log(ticketObject)
+        const ticket = await ShopListener.createTicket(ticketObject.shop, ticketObject.date, ticketObject.total, req.user.id);
+        fs.unlinkSync(req.file.path);
+        const createdProducts = [];
+        for(let product of ticketObject.products){
+            console.log(product)
+            const [dbProduct, created] = await ShopListener.getOrCreateProduct(product.name, product.price, ticketObject.shopId);
+            if(created){
+                createdProducts.push(dbProduct)
+            }
+            let userId = req.user ? req.user.id : 1;
+            await ShopListener.createBuy(product.amount, userId, dbProduct.id, ticket.id);
+        }
+        const response = {
+            ticketInfo: ticketObject,
+            createdProducts: createdProducts
+        }
+        console.log(response);
+        res.json(response)
+    }catch(error){
+        res.json({error: error.toString()})
+    }
+    
+    
+})
+/*
+router.post('/shop', upload.single('myFile'), async (req, res) => {
+    try{
+        const ticketInfo = await PdfReader.getTicketInfo(req.file.path);
+        const shops = await ShopListener.getShops();
+        const availableShops = [];
+        for(let shop of shops){
+            availableShops.push({id: shop.id, name:shop.name});
+        }
+        const ticketObject = await TicketAdapter.parseTicket(ticketInfo,availableShops);
+        fs.unlinkSync(req.file.path);
+        const response = {
+            ticketInfo: ticketObject
+        }
+        res.json(response)
+    }catch(error){
+        res.json({error: error.toString()})
+    }
+    
+    //ol.list-group.list-group-numbered
+                each buy in buys
+                    li.list-group-item.d-flex.justify-content-between.align-items-start
+                        .ms-2.me-auto
+                            .fw-bold #{buy.product}
+                            | #{buy.date} #{buy.shop} 
+                        span.badge.bg-primary.rounded-pill #{buy.amount}
+})*/
+
+router.get('/product/:productId', async (req, res) => {
+    const productId = req.params.productId;
+    const getProduct = await ShopListener.getProduct(productId);
+    if(getProduct){
+        const allProducts = await ShopListener.getProductsByNameAndShop(getProduct.name, getProduct.shopId);
+        const productShop = await ShopListener.getShop(getProduct.shopId);
+        const productPrices = await ShopHelper.constructProductInfo(allProducts,productShop);
+        console.log(productPrices);
+        res.render('product',{products:allProducts});
+    }else{
+        res.render('error');
+    }
+    
+})
+
+router.get('/ticket/:ticketId', async (req, res) => {
+    const ticketId = req.params.ticketId;
+    const ticketInfo = await ShopListener.getTicket(ticketId);
+    const ticketBuys = await ShopListener.getBuysFromTicket(ticketId);
+    const targetProducts = [];
+    for(let buy of ticketBuys){
+        const product = await ShopListener.getProduct(buy.productId);
+        targetProducts.push(product);
+    }
+    const buys = [];
+    for(let buy of ticketBuys){
+        const tProduct = targetProducts.filter(i => i.id == buy.productId);
+        const aBuy = {
+            name: tProduct[0].name,
+            price: parseFloat(tProduct[0].price),
+            amount: buy.amount
+        }
+        buys.push(aBuy);
+    }
+    res.render('ticket', {ticket: ticketInfo, products: buys});
+    
+})
+
+router.get('/error', async (req, res) => {
+    res.render('error')
+})
+
 
 module.exports = router;
