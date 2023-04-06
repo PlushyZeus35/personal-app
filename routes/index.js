@@ -25,7 +25,6 @@ const storage = multer.diskStorage({
 const upload = multer({storage:storage});
 var fs = require('fs');
 const { DateTime, DATE_SHORT } = require("luxon");
-const ShopHelper = require('../helpers/ShopHelper');
 var router = express.Router();
 const TicketHandler = require('../helpers/TicketHandler');
 const UserHandler = require('../helpers/UserHandler');
