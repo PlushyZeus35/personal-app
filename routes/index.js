@@ -27,6 +27,8 @@ var fs = require('fs');
 const { DateTime, DATE_SHORT } = require("luxon");
 const ShopHelper = require('../helpers/ShopHelper');
 var router = express.Router();
+const TicketHandler = require('../helpers/TicketHandler');
+const UserHandler = require('../helpers/UserHandler');
 
 /* GET Index page. */
 router.get('/', isLoggedIn,async (req, res) => {
@@ -221,28 +223,11 @@ router.post('/tasks/edit', isLoggedIn, async (req, res) => {
 })
 
 router.get('/shop',isLoggedIn ,async(req, res) => {
-    const userBuys = await ShopListener.getUserBuys(req.user.id);
-    const userBuysParsed = await ShopHelper.parseProductsShop(userBuys);
-    const tickets = await ShopListener.getUserTickets(req.user.id);
-    console.log(tickets)
-    let total = 0;
-    for(let ticket of tickets){
-        total += ticket.amount;
-    }
-    let dt = DateTime.now();
-    dt = dt.startOf('month');
-    let startMonth = new Date(dt.toISODate());
-    console.log(startMonth);
-    let thisMonthTickets = tickets.filter( t => new Date(t.date) > startMonth);
-    let totalThisMonth = 0;
-    for(let ticket of thisMonthTickets){
-        totalThisMonth += ticket.amount;
-    }
-    console.log(thisMonthTickets);
-    let topBuys = await ShopHelper.parseTopProducts(userBuysParsed);
-    topBuys = topBuys.slice(0,5);   // top five
-    console.log(topBuys);
-    res.render('shop', {tickets: tickets, buys: userBuysParsed, topBuys: topBuys, total: total, totalThisMonth: totalThisMonth});
+    let userHandler = new UserHandler(req.user.id);
+    const userTickets = await userHandler.ticketsInfo;
+    const ticketStats = await userHandler.ticketsStats;
+    console.log(userTickets)
+    res.render('shop', {tickets: userTickets, stats: ticketStats});
 })
 
 router.post('/shop', isLoggedIn, upload.single('myFile'), async (req, res) => {
@@ -307,45 +292,32 @@ router.post('/shop', upload.single('myFile'), async (req, res) => {
                         span.badge.bg-primary.rounded-pill #{buy.amount}
 })*/
 
-router.get('/product/:productId', async (req, res) => {
-    const productId = req.params.productId;
-    const getProduct = await ShopListener.getProduct(productId);
-    if(getProduct){
-        const allProducts = await ShopListener.getProductsByNameAndShop(getProduct.name, getProduct.shopId);
-        const productShop = await ShopListener.getShop(getProduct.shopId);
-        const productPrices = await ShopHelper.constructProductInfo(allProducts,productShop);
-        console.log(productPrices);
-        res.render('product',{products:allProducts});
-    }else{
-        res.render('error');
-    }
-    
-})
-
 router.get('/ticket/:ticketId', async (req, res) => {
     const ticketId = req.params.ticketId;
-    const ticketInfo = await ShopListener.getTicket(ticketId);
-    const ticketBuys = await ShopListener.getBuysFromTicket(ticketId);
-    const targetProducts = [];
-    for(let buy of ticketBuys){
-        const product = await ShopListener.getProduct(buy.productId);
-        targetProducts.push(product);
-    }
-    const buys = [];
-    for(let buy of ticketBuys){
-        const tProduct = targetProducts.filter(i => i.id == buy.productId);
-        const aBuy = {
-            name: tProduct[0].name,
-            price: parseFloat(tProduct[0].price),
-            amount: buy.amount
-        }
-        buys.push(aBuy);
-    }
-    res.render('ticket', {ticket: ticketInfo, products: buys});
-    
+    let ticketHandler = new TicketHandler(ticketId);
+    const ticketInfo = await ticketHandler.productsInfo;
+    console.log(ticketInfo)
+    if(ticketInfo.error){
+        res.render('error')
+    }else{
+        res.render('ticket', {ticket: ticketInfo});
+    } 
 })
 
 router.get('/error', async (req, res) => {
+    res.render('error')
+})
+
+router.get('/test', async (req, res) => {
+    let uH = new UserHandler(1);
+    /*let start = new Date();
+    console.log(await tH.productsInfo)
+    let end = new Date() - start;
+    console.log(`Tiempo de ejecución ${end} ms`);*/
+
+    console.log(await uH.ticketsStats)
+    
+    
     res.render('error')
 })
 

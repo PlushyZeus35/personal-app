@@ -28,7 +28,7 @@ ShopListener.createBuy = async (amount, userId, productId, ticketId) => {
 }
 
 ShopListener.getProduct = async (productId) => {
-    return await Product.findByPk(productId);
+    return await Product.findAll({where:{id:productId}});
 }
 
 ShopListener.getProductsByNameAndShop = async (productName, shopId) => {
