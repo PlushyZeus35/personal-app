@@ -4,6 +4,6 @@ module.exports = {
         database: process.env.DATABASE_DATABASE,
         host: process.env.DATABASE_HOST,
         user: process.env.DATABASE_USER,
-        port: 3306
+        port: process.env.DATABASE_PORT
     }
 }
